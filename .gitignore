@@ -1,0 +1,5 @@
+consep_dataset
+logs
+models
+
+*.pyc
