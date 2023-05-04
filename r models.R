@@ -28,12 +28,18 @@ set.seed(101913)
 
 knn_accs = data.frame(matrix(ncol = 10, nrow = 0))
 colnames(knn_accs) = c(1:10)
+knn_table_agg = as.table(rbind(c(0,0,0), c(0,0,0), c(0,0,0)))
 
 svm_accs = data.frame(matrix(ncol = 3, nrow = 0))
 colnames(svm_accs) = c("radial", "linear", "poly")
+svm_table1 = as.table(rbind(c(0,0,0), c(0,0,0), c(0,0,0)))
+svm_table2 = as.table(rbind(c(0,0,0), c(0,0,0), c(0,0,0)))
+svm_table3 = as.table(rbind(c(0,0,0), c(0,0,0), c(0,0,0)))
+
 
 rf_accs = data.frame(matrix(ncol = 1, nrow = 0))
 colnames(rf_accs) = c(1:1)
+rf_table = as.table(rbind(c(0,0,0), c(0,0,0), c(0,0,0)))
 
 for (j in 1:20) {
 
@@ -47,6 +53,7 @@ for (j in 1:20) {
   
   table1 = table(Predicted=pred1, Actual=features_test$label)
   table1
+  svm_table1 = svm_table1 + table1
   
   model1_accuracy = sum(diag(table1))/sum(table1)
   model1_accuracy
@@ -60,6 +67,7 @@ for (j in 1:20) {
   
   table2 = table(Predicted=pred2, Actual=features_test$label)
   table2
+  svm_table2 = svm_table2 + table2
   
   model2_accuracy = sum(diag(table2))/sum(table2)
   model2_accuracy
@@ -73,6 +81,7 @@ for (j in 1:20) {
   
   table3 = table(Predicted=pred3, Actual=features_test$label)
   table3
+  svm_table3 = svm_table3 + table3
   
   model3_accuracy = sum(diag(table3))/sum(table3)
   model3_accuracy
@@ -101,6 +110,8 @@ for (j in 1:20) {
   table4 = table(Predicted=pred3, Actual=features_test$label)
   table4
   
+  rf_table = rf_table + table4
+  
   model4_accuracy = sum(diag(table4))/sum(table4)
   model4_accuracy
   
@@ -120,8 +131,9 @@ for (j in 1:20) {
   
   knn_accs = rbind(knn_accs, accs)
   
-  knn1 = knn(features_train, features_test, features_train$label, k=7)
+  knn1 = knn(features_train, features_test, features_train$label, k=1)
   knn_table = table(knn1, features_test$label)
+  knn_table_agg = knn_table_agg + knn_table
   sum(diag(knn_table))/sum(knn_table)
 }
 
@@ -129,8 +141,14 @@ for (i in 1:10) {
   print(mean(knn_accs[[i]]))
 }
 
+knn_table_agg
+
 for (i in 1:3) {
   print(mean(svm_accs[[i]]))
 }
 
 mean(rf_accs[[1]])
+
+rf_table
+
+svm_table1
